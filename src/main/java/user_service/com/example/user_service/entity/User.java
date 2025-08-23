@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Table(name = "users")
 @Entity
 @Data
@@ -25,5 +27,5 @@ public class User {
     String name;
     String email;
     String password;
-    String role;
+
 }

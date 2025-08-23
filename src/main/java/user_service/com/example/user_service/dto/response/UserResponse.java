@@ -19,6 +19,5 @@ public class UserResponse {
     String name;
     String email;
     String password;
-    String role;
 
 }
