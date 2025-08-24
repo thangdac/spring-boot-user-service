@@ -1,10 +1,10 @@
 package user_service.com.example.user_service.service;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import user_service.com.example.user_service.Enums.Role;
 import user_service.com.example.user_service.dto.request.UserCreationRequest;
 import user_service.com.example.user_service.dto.request.UserUpdateRequest;
 import user_service.com.example.user_service.dto.response.UserResponse;
@@ -13,6 +13,8 @@ import user_service.com.example.user_service.exception.ErrorCode;
 import user_service.com.example.user_service.exception.ErrorCodeException;
 import user_service.com.example.user_service.mapper.UserMapper;
 import user_service.com.example.user_service.repository.UserRepository;
+
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -21,15 +23,29 @@ import java.util.List;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> getAllUsers() {
+
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toUserResponse)
+                .toList();
     }
+
     public UserResponse getUserById(String id) {
         return userMapper.toUserResponse(
                     userRepository.findById(id)
                         .orElseThrow(() -> new ErrorCodeException(ErrorCode.USER_NOT_FOUND)));
     }
+
+    public UserResponse getUserByName(String name) {
+        return userMapper.toUserResponse(
+                userRepository.findByName(name)
+                        .orElseThrow(() -> new ErrorCodeException(ErrorCode.USER_NOT_FOUND)));
+    }
+
     public User createUser(UserCreationRequest request) {
 
         if (userRepository.existsByName(request.getName())) {
@@ -38,11 +54,14 @@ public class UserService {
 
         User user = userMapper.toUser(request);
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
         return userRepository.save(user);
     }
+
     public UserResponse updateUser(String id, UserUpdateRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ErrorCodeException(ErrorCode.USER_NOT_FOUND));
@@ -51,6 +70,8 @@ public class UserService {
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteUser(String id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ErrorCodeException(ErrorCode.USER_NOT_FOUND));

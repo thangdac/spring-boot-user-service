@@ -1,2 +1,6 @@
-package user_service.com.example.user_service.Enums;public enum Role {
+package user_service.com.example.user_service.Enums;
+
+public enum Role {
+    ADMIN,
+    USER
 }

@@ -3,6 +3,8 @@ package user_service.com.example.user_service.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import user_service.com.example.user_service.dto.request.APIResponse;
 import user_service.com.example.user_service.dto.request.UserCreationRequest;
@@ -10,9 +12,9 @@ import user_service.com.example.user_service.dto.request.UserUpdateRequest;
 import user_service.com.example.user_service.dto.response.UserResponse;
 import user_service.com.example.user_service.entity.User;
 import user_service.com.example.user_service.service.UserService;
-
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -22,23 +24,31 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    APIResponse<List<User>> getAllUsers() {
+    APIResponse<List<UserResponse>> getAllUsers() {
 
-        APIResponse<List<User>> response = new APIResponse<>();
-
-        response.setCode(200);
-        response.setResult(userService.getAllUsers());
-
-        return response;
+        return APIResponse.<List<UserResponse>>builder()
+                .code(200)
+                .result(userService.getAllUsers())
+                .build();
     }
+
+    @GetMapping("/me")
+    APIResponse<UserResponse> getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return APIResponse.<UserResponse>builder()
+                .code(200)
+                .result(userService.getUserByName(authentication.getName()))
+                .build();
+    }
+
     @GetMapping("/{id}")
     APIResponse<UserResponse> getUserById(@PathVariable String id) {
 
-        APIResponse<UserResponse> response = new APIResponse<>();
-        response.setCode(200);
-        response.setResult(userService.getUserById(id));
-
-        return response;
+        return APIResponse.<UserResponse>builder()
+                .code(200)
+                .result(userService.getUserById(id))
+                .build();
     }
 
     @PostMapping
@@ -65,7 +75,6 @@ public class UserController {
     APIResponse<User> deleteUser(@PathVariable String id) {
 
         APIResponse<User> response = new APIResponse<>();
-
         String message = userService.deleteUser(id);
 
         response.setCode(200);

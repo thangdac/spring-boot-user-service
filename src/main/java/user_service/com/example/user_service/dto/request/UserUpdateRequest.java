@@ -19,10 +19,10 @@ import lombok.Builder;
 
 public class UserUpdateRequest {
 
+    @Size(min = 3, max = 50, message = "NAME_INVALID")
+    String name;
+
     @Email(message = "EMAIL_INVALID")
     String email;
-
-    @Size(min = 6, max = 20, message = "PASSWORD_INVALID")
-    String password;
 
 }
