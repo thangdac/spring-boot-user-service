@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import user_service.com.example.user_service.dto.request.APIResponse;
 import user_service.com.example.user_service.dto.request.UserCreationRequest;
+import user_service.com.example.user_service.dto.request.UserPasswordUpdateRequest;
 import user_service.com.example.user_service.dto.request.UserUpdateRequest;
 import user_service.com.example.user_service.dto.response.UserResponse;
 import user_service.com.example.user_service.entity.User;
@@ -52,9 +53,10 @@ public class UserController {
     }
 
     @PostMapping
-    APIResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
-        APIResponse<User> response = new APIResponse<>();
+    APIResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+        APIResponse<UserResponse> response = new APIResponse<>();
 
+        response.setCode(200);
         response.setResult(userService.createUser(request));
 
         return response;
@@ -67,6 +69,17 @@ public class UserController {
 
         response.setCode(200);
         response.setResult(userService.updateUser(id, request));
+
+        return response;
+    }
+
+    @PatchMapping("/updatePassword/{id}")
+    APIResponse<UserResponse> updateUserPassword(@PathVariable String id,@RequestBody @Valid UserPasswordUpdateRequest request) {
+        APIResponse<UserResponse> response = new APIResponse<>();
+
+        response.setCode(200);
+        response.setMessage("Password updated successfully");
+        response.setResult(userService.updateUserPassword(id, request));
 
         return response;
     }

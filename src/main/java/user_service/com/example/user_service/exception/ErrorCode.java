@@ -18,6 +18,7 @@ public enum ErrorCode {
     PASSWORD_INVALID(400, "Password must be between 6 and 20 characters"),
     EMAIL_INVALID(400, "Email should be valid"),
     UNAUTHENTICATED(401, "User is not authenticated"),
+    INCORRECT_PASSWORD(400, "Incorrect password")
     ;
     final int code;
     final String message;
