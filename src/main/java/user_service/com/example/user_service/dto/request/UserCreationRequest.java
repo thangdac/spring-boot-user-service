@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
+import java.util.HashSet;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -27,4 +29,6 @@ public class UserCreationRequest {
 
     @Size(min = 6, max = 20, message = "PASSWORD_INVALID")
     String password;
+
+
 }

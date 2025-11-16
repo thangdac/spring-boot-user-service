@@ -10,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,5 +27,9 @@ public class UserUpdateRequest {
 
     @Email(message = "EMAIL_INVALID")
     String email;
+
+    LocalDate dob;
+
+    List<String> roles;
 
 }

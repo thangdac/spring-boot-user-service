@@ -12,6 +12,7 @@ import user_service.com.example.user_service.dto.request.UserPasswordUpdateReque
 import user_service.com.example.user_service.dto.request.UserUpdateRequest;
 import user_service.com.example.user_service.dto.response.UserResponse;
 import user_service.com.example.user_service.entity.User;
+import user_service.com.example.user_service.service.AuthenticationService;
 import user_service.com.example.user_service.service.UserService;
 import java.util.List;
 
@@ -23,9 +24,14 @@ import java.util.List;
 public class UserController {
 
     UserService userService;
+    private final AuthenticationService authenticationService;
 
     @GetMapping
     APIResponse<List<UserResponse>> getAllUsers() {
+
+        SecurityContextHolder.getContext().getAuthentication().getAuthorities().forEach(authority ->
+                log.info("Authority: {}", authority.getAuthority())
+        );
 
         return APIResponse.<List<UserResponse>>builder()
                 .code(200)
@@ -54,45 +60,36 @@ public class UserController {
 
     @PostMapping
     APIResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
-        APIResponse<UserResponse> response = new APIResponse<>();
-
-        response.setCode(200);
-        response.setResult(userService.createUser(request));
-
-        return response;
+        return APIResponse.<UserResponse>builder()
+                .code(200)
+                .result(userService.createUser(request))
+                .build();
     }
 
     @PutMapping("/{id}")
     APIResponse<UserResponse> updateUser(@PathVariable String id,@RequestBody @Valid UserUpdateRequest request) {
 
-        APIResponse<UserResponse> response = new APIResponse<>();
-
-        response.setCode(200);
-        response.setResult(userService.updateUser(id, request));
-
-        return response;
+        return APIResponse.<UserResponse>builder()
+                .code(200)
+                .result(userService.updateUser(id, request))
+                .build();
     }
 
     @PatchMapping("/updatePassword/{id}")
     APIResponse<UserResponse> updateUserPassword(@PathVariable String id,@RequestBody @Valid UserPasswordUpdateRequest request) {
-        APIResponse<UserResponse> response = new APIResponse<>();
-
-        response.setCode(200);
-        response.setMessage("Password updated successfully");
-        response.setResult(userService.updateUserPassword(id, request));
-
-        return response;
+        return APIResponse.<UserResponse>builder()
+                .code(200)
+                .message("Password updated successfully")
+                .result(userService.updateUserPassword(id, request))
+                .build();
     }
 
     @DeleteMapping("/{id}")
     APIResponse<User> deleteUser(@PathVariable String id) {
 
-        APIResponse<User> response = new APIResponse<>();
-        String message = userService.deleteUser(id);
-
-        response.setCode(200);
-        response.setMessage(message);
-
-        return response;
+        return APIResponse.<User>builder()
+                .code(200)
+                .message(userService.deleteUser(id))
+                .build();
     }
 }

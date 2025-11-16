@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import user_service.com.example.user_service.Enums.Role;
 
 import java.util.Set;
 
@@ -15,10 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class UserResponse {
-
-    String id;
+public class PermissionResponse {
     String name;
-    String email;
-    Set<RoleResponse> roles;
+    String description;
 }

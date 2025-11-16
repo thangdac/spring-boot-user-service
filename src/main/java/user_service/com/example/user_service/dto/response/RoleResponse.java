@@ -3,6 +3,9 @@ package user_service.com.example.user_service.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import user_service.com.example.user_service.entity.Permission;
+
+import java.util.Set;
 
 @Data
 @Builder
@@ -10,7 +13,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectResponse {
-
-    Boolean valid;
+public class RoleResponse {
+    String name;
+    String description;
+    Set<Permission> permissions;
 }

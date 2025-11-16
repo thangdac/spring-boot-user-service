@@ -1,5 +1,8 @@
 package user_service.com.example.user_service.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ErrorCodeException extends RuntimeException {
 
     public ErrorCodeException(ErrorCode errorCode) {
@@ -7,12 +10,5 @@ public class ErrorCodeException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    private ErrorCode errorCode;
-
-    public ErrorCode getErrorCode() {
-        return errorCode;
-    }
-    public int getCode() {
-        return errorCode.getCode();
-    }
+    private final ErrorCode errorCode;
 }

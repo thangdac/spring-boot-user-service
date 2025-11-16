@@ -1,6 +1,7 @@
-package user_service.com.example.user_service.dto.response;
+package user_service.com.example.user_service.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,16 +10,20 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
+@Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class UserResponse {
 
-    String id;
+public class Role {
+    @Id
     String name;
-    String email;
-    Set<RoleResponse> roles;
+    String description;
+
+    @ManyToMany
+    Set<Permission> permissions;
 }
+
