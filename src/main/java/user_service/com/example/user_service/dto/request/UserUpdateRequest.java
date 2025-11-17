@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import user_service.com.example.user_service.Validator.DobConstraint;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,13 +23,14 @@ import java.util.List;
 
 public class UserUpdateRequest {
 
-    @Size(min = 3, max = 50, message = "NAME_INVALID")
+    @Size(min = 5, max = 50, message = "USERNAME_INVALID")
     String name;
 
     @Email(message = "EMAIL_INVALID")
     String email;
 
-    LocalDate dob;
+    @DobConstraint(min = 18, message = "DOB_INVALID")
+    LocalDate dateOfBirth;
 
     List<String> roles;
 

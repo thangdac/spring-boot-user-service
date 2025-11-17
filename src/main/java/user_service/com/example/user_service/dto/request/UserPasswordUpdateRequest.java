@@ -14,11 +14,11 @@ import lombok.experimental.FieldDefaults;
 
 public class UserPasswordUpdateRequest {
 
-    @Size(min = 6, message = "Password must be at least 8 characters long")
+    @Size(min = 6, message = "PASSWORD_INVALID")
     String oldPassword;
 
 
-    @Size(min = 6, message = "Password must be at least 8 characters long")
+    @Size(min = 6, message = "PASSWORD_INVALID")
     String newPassword;
 
 }

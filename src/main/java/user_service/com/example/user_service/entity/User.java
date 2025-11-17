@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -26,6 +27,7 @@ public class User {
     String name;
     String email;
     String password;
+    LocalDate dateOfBirth;
 
     @ManyToMany
     Set<Role> roles;

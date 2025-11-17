@@ -16,12 +16,13 @@ public enum ErrorCode {
     INVALID_REQUEST(703, "Invalid request", HttpStatus.BAD_REQUEST),
     INTERNAL_SERVER_ERROR(704, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     UNCATEGORIZED_ERROR(705, "Uncategorized error", HttpStatus.UNAUTHORIZED),
-    USERNAME_INVALID(706, "Name must be between 3 and 50 characters", HttpStatus.BAD_REQUEST),
-    PASSWORD_INVALID(707, "Password must be between 6 and 20 characters", HttpStatus.BAD_REQUEST),
+    USERNAME_INVALID(706, "Name must be between {min} and 50 characters", HttpStatus.BAD_REQUEST),
+    PASSWORD_INVALID(707, "Password must be between {min} and 20 characters", HttpStatus.BAD_REQUEST),
     EMAIL_INVALID(708, "Email should be valid", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(709, "User is not authenticated", HttpStatus.UNAUTHORIZED),
     INCORRECT_PASSWORD(710, "Incorrect password", HttpStatus.BAD_REQUEST),
-    UNAUTHORIZED(711, "User is not authorized to perform this action", HttpStatus.FORBIDDEN)
+    UNAUTHORIZED(711, "User is not authorized to perform this action", HttpStatus.FORBIDDEN),
+    DOB_INVALID(712, "Your age must be at least {min}", HttpStatus.BAD_REQUEST)
 
     ;
     final int code;

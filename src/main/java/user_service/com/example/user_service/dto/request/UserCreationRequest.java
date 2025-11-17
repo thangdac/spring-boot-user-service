@@ -9,8 +9,9 @@ import lombok.AccessLevel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import user_service.com.example.user_service.Validator.DobConstraint;
 
-import java.util.HashSet;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -21,7 +22,7 @@ import java.util.HashSet;
 
 public class UserCreationRequest {
 
-    @Size(min = 3, max = 50, message = "USERNAME_INVALID")
+    @Size(min = 5, max = 50, message = "USERNAME_INVALID")
     String name;
 
     @Email(message = "EMAIL_INVALID")
@@ -30,5 +31,6 @@ public class UserCreationRequest {
     @Size(min = 6, max = 20, message = "PASSWORD_INVALID")
     String password;
 
-
+    @DobConstraint(min = 18, message = "DOB_INVALID")
+    LocalDate dateOfBirth;
 }
