@@ -5,6 +5,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -16,16 +17,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import user_service.com.example.user_service.dto.request.AuthenticationRequest;
 import user_service.com.example.user_service.dto.request.IntrospectRequest;
+import user_service.com.example.user_service.dto.request.LogoutRequest;
 import user_service.com.example.user_service.dto.response.AuthenticationResponse;
 import user_service.com.example.user_service.dto.response.IntrospectResponse;
+import user_service.com.example.user_service.entity.InvalidatedToken;
 import user_service.com.example.user_service.entity.User;
 import user_service.com.example.user_service.exception.ErrorCode;
 import user_service.com.example.user_service.exception.ErrorCodeException;
+import user_service.com.example.user_service.repository.InvalidatedTokenRepository;
 import user_service.com.example.user_service.repository.UserRepository;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +41,7 @@ public class AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
 
+    InvalidatedTokenRepository invalidatedTokenRepository;
     @NonFinal
     @Value("${jwt.secret}")
     private String SIGNER_KEY;
@@ -69,6 +75,7 @@ public class AuthenticationService {
                 .issuer("user-service")
                 .issueTime(new Date())
                 .expirationTime(new Date(System.currentTimeMillis() + 3600 * 1000))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", BuildScope(user))
                 .build();
 
@@ -107,21 +114,56 @@ public class AuthenticationService {
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
 
         var token = request.getToken();
-        if (token == null || token.isEmpty()) {
-            throw new ErrorCodeException(ErrorCode.UNAUTHENTICATED);
-        }
 
+        Boolean valid = true;
+
+        try {
+            verifyToken(token);
+        } catch (ErrorCodeException e) {
+            valid = false;
+        }
+        return IntrospectResponse.builder()
+                .valid(valid)
+                .build();
+    }
+
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var token = verifyToken(request.getToken());
+
+        String jti = token.getJWTClaimsSet().getJWTID();
+        Date expiryTime = token.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jti)
+                .expiryTime(expiryTime)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         JWSVerifier verifier =  new MACVerifier(SIGNER_KEY.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
 
-        return IntrospectResponse.builder()
-                .valid(verified && expirationTime != null && expirationTime.after(new Date()))
-                .build();
+        if(!verified && expiryTime.after(new Date())){
+            throw new ErrorCodeException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
+            throw new ErrorCodeException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        return signedJWT;
     }
 
+    @Transactional
+    public void cleanupInvalidatedTokens() {
+        Date oneDay = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+        invalidatedTokenRepository.deleteByExpiryTimeBefore(oneDay);
+    }
 }

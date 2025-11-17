@@ -1,14 +1,16 @@
-package user_service.com.example.user_service.dto.response;
+package user_service.com.example.user_service.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectResponse {
-    boolean valid;
+public class LogoutRequest {
+
+    String token;
+
 }
