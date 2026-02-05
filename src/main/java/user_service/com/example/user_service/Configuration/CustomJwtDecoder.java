@@ -1,6 +1,5 @@
 package user_service.com.example.user_service.Configuration;
 
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,13 +9,9 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
-import user_service.com.example.user_service.dto.request.IntrospectRequest;
 import user_service.com.example.user_service.repository.InvalidatedTokenRepository;
-import user_service.com.example.user_service.service.AuthenticationService;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.text.ParseException;
-import java.util.Objects;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
@@ -53,7 +48,6 @@ public class CustomJwtDecoder implements JwtDecoder {
                     .macAlgorithm(MacAlgorithm.HS512)
                     .build();
         }
-
         // Decode chính xác
         return jwtDecoder.decode(token);
     }

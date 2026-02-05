@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: user_service
+
+  datasource:
+    url: ${DBMS_URL:jdbc:mysql://mysql-8.0.45:3306/user-data}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DBMS_NAME:root}
+    password: ${DBMS_PASSWORD:root}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+jwt:
+  secret: "XzEXvrlwXHRypV2UTZ/4Obwyrux0/UoweVaZiO/Vb9/T8kXLGHRJxIK+6Wllz799"

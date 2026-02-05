@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import user_service.com.example.user_service.Enums.Role;
-
-import java.util.Set;
 
 @Data
 @Builder

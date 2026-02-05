@@ -29,10 +29,6 @@ public class UserController {
     @GetMapping
     APIResponse<List<UserResponse>> getAllUsers() {
 
-        SecurityContextHolder.getContext().getAuthentication().getAuthorities().forEach(authority ->
-                log.info("Authority: {}", authority.getAuthority())
-        );
-
         return APIResponse.<List<UserResponse>>builder()
                 .code(200)
                 .result(userService.getAllUsers())
@@ -66,12 +62,10 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/{id}")
-    APIResponse<UserResponse> updateUser(@PathVariable String id,@RequestBody @Valid UserUpdateRequest request) {
-
+    @PutMapping("/{userId}")
+    APIResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return APIResponse.<UserResponse>builder()
-                .code(200)
-                .result(userService.updateUser(id, request))
+                .result(userService.updateUser(userId, request))
                 .build();
     }
 
